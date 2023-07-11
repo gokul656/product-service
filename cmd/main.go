@@ -7,23 +7,27 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gokul656/product-service/app/bootstraps"
-	env "github.com/gokul656/product-service/app/configs"
-	"github.com/gokul656/product-service/app/controllers"
-	"github.com/gokul656/product-service/app/middlewares"
+	"github.com/gokul656/product-service/app/configs"
+	"github.com/gokul656/product-service/app/handlers"
 )
 
 func main() {
 	log.Println("Starting Product Service")
 
-	cfg := env.GetEnv()
+	cfg := configs.GetEnv()
 
 	r := gin.Default()
+	r.Use(gin.CustomRecovery(configs.ErrorHandler))
+
 	public := r.Group("dev")
 	public.GET("/ping", pingHandler)
+	public.POST("/user", handlers.RegisterUser)
+	public.GET("/user/:user", handlers.AuthHandler)
+	public.DELETE("/user/:user", handlers.DeleteUser)
+	public.GET("/user", handlers.GetAllUsers)
 
-	protected := r.Group("prod")
-	protected.Use(middlewares.ValidateRequest())
-	protected.GET("/user/:user", controllers.AuthHandler)
+	// protected := r.Group("prod")
+	// protected.Use(middlewares.ValidateRequest())
 
 	bootstraps.Setup()
 

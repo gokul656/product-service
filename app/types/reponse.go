@@ -1,7 +1,7 @@
 package types
 
 type APIResponse struct {
-	Message    string `json:"message"`
 	StatusCode int    `json:"status"`
+	Message    string `json:"message"`
 	Data       string `json:"data,omitempty"`
 }
